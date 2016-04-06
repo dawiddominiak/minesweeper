@@ -2,33 +2,28 @@ package bundle.game.domain.entity;
 
 import bundle.core.value.Entity;
 import bundle.game.domain.value.GameField;
-
-import java.util.UUID;
+import bundle.game.domain.value.GameFieldStateId;
 
 public class GameFieldState implements Entity<GameFieldState> {
 
-    private UUID gameFieldStateId;
+    private GameFieldStateId gameFieldStateId;
     private GameField gameField;
 
-    private GameFieldState(UUID gameFieldStateId) {
+    private GameFieldState(GameFieldStateId gameFieldStateId) {
         this.gameFieldStateId = gameFieldStateId;
     }
 
-    public static GameFieldState createFromGameField(UUID gameFieldStateId, GameField gameField) {
+    public static GameFieldState createFromGameField(GameFieldStateId gameFieldStateId, GameField gameField) {
         GameFieldState gameFieldState = new GameFieldState(gameFieldStateId);
         gameFieldState.gameField = gameField;
 
         return gameFieldState;
     }
 
-    public UUID getGameFieldStateId() {
-        return gameFieldStateId;
-    }
-
     /**
      * @inheritDoc
      */
     public boolean sameIdentityAs(GameFieldState other) {
-        return gameFieldStateId.equals(other.getGameFieldStateId());
+        return gameFieldStateId.sameValueAs(other.gameFieldStateId);
     }
 }

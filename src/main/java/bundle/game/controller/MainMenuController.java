@@ -1,18 +1,30 @@
 package bundle.game.controller;
 
-import bundle.core.controller.AbstractController;
 import bundle.game.domain.value.PlainSize;
-import bundle.game.view.MainMenu;
+import bundle.game.view.MainMenuView;
 import com.google.inject.Inject;
 
-public class MainMenuController extends AbstractController<MainMenu> {
+public class MainMenuController {
+    private MainMenuView view;
+    private GameController gameController;
 
     @Inject
-    public void setView(MainMenu view) {
-        super.setView(view);
+    public void setView(MainMenuView view) {
+        this.view = view;
     }
 
-    public void createNewGame(PlainSize<Integer> plainSize, int minesCount) {
+    @Inject
+    public void setGameController(GameController gameController) {
+        this.gameController = gameController;
+    }
+
+    public void show() {
+        view.draw();
+    }
+
+    public void createNewGame(PlainSize plainSize, int minesCount) {
+        view.setVisible(false);
+        gameController.showGamePlain(plainSize, minesCount);
     }
 
     public void exit() {

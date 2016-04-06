@@ -26,7 +26,14 @@ public class Coordinates <TType> implements ValueObject<Coordinates<TType>> {
         return y;
     }
 
-    public boolean sameValueAs(Coordinates<TType> object) {
-        return getX() == object.getX() && getY() == object.getY();
+    public boolean sameValueAs(Coordinates<TType> other) {
+        return x == other.x && y == other.y;
+    }
+
+    public boolean equals(Object other) {
+        //other must be of the same class
+        if (!this.getClass().equals(other.getClass())) return false;
+
+        return sameValueAs((Coordinates<TType>) other);
     }
 }

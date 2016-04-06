@@ -1,4 +1,4 @@
-package bundle.game.view.elements;
+package bundle.game.view.element.mainmenu;
 
 import bundle.game.controller.MainMenuController;
 import bundle.game.domain.value.PlainSize;
@@ -42,9 +42,10 @@ public class StartGameWidget extends JPanel {
         startButton.setText("Start game");
         startButton.addActionListener(e -> {
             controller.createNewGame(
-                new PlainSize<>(
-                        Integer.parseInt(plainWidthTextField.getText()),
-                        Integer.parseInt(plainHeightTextField.getText())
+                //TODO: validation int, and business
+                new PlainSize(
+                    Integer.parseInt(plainWidthTextField.getText()),
+                    Integer.parseInt(plainHeightTextField.getText())
                 ),
                 Integer.parseInt(minesCountTextField.getText())
             );

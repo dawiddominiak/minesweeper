@@ -12,6 +12,7 @@ public class App {
         EventQueue.invokeLater(() -> {
             Injector gameModuleInjector = Guice.createInjector(new GameModule());
             MainMenuController mainMenuController = gameModuleInjector.getInstance(MainMenuController.class);
+            mainMenuController.show();
         });
     }
 }

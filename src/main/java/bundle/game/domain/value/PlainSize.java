@@ -2,27 +2,31 @@ package bundle.game.domain.value;
 
 import bundle.core.value.ValueObject;
 
-public class PlainSize<TType> implements ValueObject<PlainSize<TType>> {
-    private TType width;
-    private TType height;
+public class PlainSize implements ValueObject<PlainSize> {
+    private int width;
+    private int height;
 
-    public PlainSize(TType width, TType height){
+    public PlainSize(int width, int height){
         this.width = width;
         this.height = height;
     }
 
-    public TType getWidth() {
+    public int getWidth() {
         return width;
     }
 
-    public TType getHeight() {
+    public int getHeight() {
         return height;
+    }
+
+    public int getArea() {
+        return width * height;
     }
 
     /**
      * @inheritDoc
      */
-    public boolean sameValueAs(PlainSize<TType> object) {
-        return getWidth() == object.getWidth() && getHeight() == object.getHeight();
+    public boolean sameValueAs(PlainSize other) {
+        return width == other.width && height == other.height;
     }
 }

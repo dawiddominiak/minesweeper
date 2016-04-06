@@ -1,6 +1,5 @@
-package bundle.game.view.elements;
+package bundle.game.view.element.mainmenu;
 
-import bundle.game.controller.MainMenuController;
 import com.google.inject.Inject;
 
 import javax.swing.*;
