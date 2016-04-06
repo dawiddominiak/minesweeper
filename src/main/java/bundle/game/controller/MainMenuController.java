@@ -13,7 +13,6 @@ public class MainMenuController extends AbstractController<MainMenu> {
     }
 
     public void createNewGame(PlainSize<Integer> plainSize, int minesCount) {
-
     }
 
     public void exit() {

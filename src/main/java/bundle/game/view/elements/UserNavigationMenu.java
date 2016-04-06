@@ -1,18 +1,19 @@
 package bundle.game.view.elements;
 
-import bundle.core.view.ControllerAwareWidget;
 import bundle.game.controller.MainMenuController;
+import com.google.inject.Inject;
 
 import javax.swing.*;
 
-public class UserNavigationMenu extends ControllerAwareWidget<MainMenuController> {
+public class UserNavigationMenu extends JPanel {
+    private MainMenuController controller;
 
+    @Inject
     public UserNavigationMenu(MainMenuController controller) {
-        setController(controller);
-        init();
+        this.controller = controller;
     }
 
-    private void init() {
+    public void draw() {
         BoxLayout currentLayout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
         setLayout(currentLayout);
 
@@ -23,7 +24,7 @@ public class UserNavigationMenu extends ControllerAwareWidget<MainMenuController
         JButton exitButton = new MainMenuButton();
         exitButton.setText("Exit");
         exitButton.addActionListener(e -> {
-            getController().exit();
+            controller.exit();
         });
         add(exitButton);
     }

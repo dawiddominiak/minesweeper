@@ -1,22 +1,22 @@
 package bundle.game.view.elements;
 
-import bundle.core.view.ControllerAwareWidget;
 import bundle.game.controller.MainMenuController;
 import bundle.game.domain.value.PlainSize;
+import com.google.inject.Inject;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class StartGameWidget extends ControllerAwareWidget<MainMenuController> {
+public class StartGameWidget extends JPanel {
 
-    public StartGameWidget(MainMenuController controller) {
-        setController(controller);
-        init();
+    private MainMenuController controller;
+
+    @Inject
+    public void setMainMenuController(MainMenuController controller) {
+        this.controller = controller;
     }
 
-    private void init() {
-        MainMenuController controller = getController();
-
+    public void draw() {
         BoxLayout currentLayout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
         setLayout(currentLayout);
 

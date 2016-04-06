@@ -1,27 +1,32 @@
 package bundle.game.view.elements;
 
-import bundle.core.view.ControllerAwareWidget;
 import bundle.game.controller.MainMenuController;
+import com.google.inject.Inject;
 
+import javax.swing.*;
 import java.awt.*;
 
-public class MainMenuElementsContainer extends ControllerAwareWidget<MainMenuController> {
+public class MainMenuElementsContainer extends JPanel {
+    private StartGameWidget startGameWidget;
+    private UserNavigationMenu userNavigationMenu;
 
-    public MainMenuElementsContainer(MainMenuController controller) {
-        setController(controller);
-        init();
+    @Inject
+    public void setStartGameWidget(StartGameWidget startGameWidget) {
+        this.startGameWidget = startGameWidget;
     }
 
-    private void init() {
-        MainMenuController controller = getController();
+    @Inject
+    public void setUserNavigationMenuWidget(UserNavigationMenu userNavigationMenu) {
+        this.userNavigationMenu = userNavigationMenu;
+    }
 
-        FlowLayout layout = new FlowLayout();
-        setLayout(layout);
+    public void draw() {
+        setLayout(new FlowLayout());
 
-        ControllerAwareWidget<MainMenuController> startGame = new StartGameWidget(controller);
-        add(startGame);
+        startGameWidget.draw();
+        add(startGameWidget);
 
-        ControllerAwareWidget<MainMenuController> userNavigation = new UserNavigationMenu(controller);
-        add(userNavigation);
+        userNavigationMenu.draw();
+        add(userNavigationMenu);
     }
 }
