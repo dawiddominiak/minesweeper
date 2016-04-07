@@ -2,9 +2,11 @@ package bundle.game.controller;
 
 
 import bundle.game.domain.entity.GameBoardState;
+import bundle.game.domain.entity.GameFieldState;
 import bundle.game.domain.service.GameService;
 import bundle.game.domain.value.GameBoard;
 import bundle.game.domain.value.BoardSize;
+import bundle.game.domain.value.GameField;
 import bundle.game.view.GameView;
 import com.google.inject.Inject;
 
@@ -30,5 +32,10 @@ public class GameController {
         GameBoardState state = GameBoardState.createFromGameBoard(stateId, board);
 
         view.handleGameBoardState(state);
+    }
+
+    public void dispatchDigAction(GameFieldState gameFieldState, GameBoardState gameBoardState) {
+        GameField gameField = gameFieldState.getGameField();
+        gameBoardState.digOn(gameField);
     }
 }

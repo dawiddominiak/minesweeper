@@ -21,7 +21,7 @@ public class GameView extends JFrame {
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setSize(500, 500); //TODO: auto - sizing
         setVisible(true);
+        setSize(getPreferredSize());
     }
 }

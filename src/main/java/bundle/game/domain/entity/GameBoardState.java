@@ -4,6 +4,7 @@ import bundle.core.value.Entity;
 import bundle.core.value.Observable;
 import bundle.core.value.Observer;
 import bundle.game.domain.value.*;
+import bundle.game.exception.NoGameFieldStateFoundException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -11,19 +12,20 @@ import java.util.stream.Collectors;
 public class GameBoardState implements Entity<GameBoardState>, Observable {
     private UUID gameBoardStateId;
     private GameBoard gameBoard;
-    private Map<Coordinates<Integer>, GameFieldState> gameFieldStateSet;
+    private Map<Coordinates<Integer>, GameFieldState> gameFieldStateMap;
     private Map<InGameEventNames, List<Observer>> observers;
 
     private GameBoardState(UUID gameBoardStateId) {
         this.gameBoardStateId = gameBoardStateId;
         this.observers = new HashMap<>();
+        gameFieldStateMap = new HashMap<>();
     }
 
     public static GameBoardState createFromGameBoard(UUID gameBoardStateId, GameBoard board) {
         GameBoardState state = new GameBoardState(gameBoardStateId);
         state.gameBoard = board;
 
-        state.gameFieldStateSet = board
+        state.gameFieldStateMap = board
                 .getFieldSet()
                 .entrySet()
                 .stream()
@@ -40,6 +42,77 @@ public class GameBoardState implements Entity<GameBoardState>, Observable {
         ;
 
         return state;
+    }
+
+    public GameBoard getGameBoard() {
+        return gameBoard;
+    }
+
+    public void digOn(GameField gameField) {
+        GameFieldState gameFieldState = getGameFieldState(gameField);
+        DiggingResult diggingResult = gameFieldState.dig();
+
+        if (
+            diggingResult == DiggingResult.DUG_SAFELY
+            && gameBoard.countNumberOfMinesInNeighborhood(gameField) == 0
+        ) {
+            List<GameFieldState> initialList = new ArrayList<>();
+            initialList.add(gameFieldState);
+
+            while (initialList.size() > 0) {
+                initialList = nextBreadthFirstStep(initialList);
+            }
+        }
+    }
+
+    private List<GameFieldState> nextBreadthFirstStep(List<GameFieldState> initialList) {
+        List<GameFieldState> outputList = new ArrayList<>();
+
+        initialList.stream().forEach(gameFieldState -> {
+            List<GameField> neighbors = gameBoard.getListOfTroubleNeighbors(gameFieldState.getGameField());
+            List<GameFieldState> notVisitedNeighbors = neighbors
+                    .stream()
+                    .map(this::getGameFieldState)
+                    .filter(GameFieldState::checkIfCanBeDug)
+                    .collect(Collectors.toList())
+            ;
+
+            neighbors
+                    .stream()
+                    .forEach(
+                            neighbor -> getGameFieldState(neighbor).dig()
+                    );
+
+            outputList.addAll(
+                notVisitedNeighbors
+                    .stream()
+                    .filter(neighbor -> gameBoard.countNumberOfMinesInNeighborhood(neighbor.getGameField()) == 0)
+                    .collect(Collectors.toList())
+            );
+        });
+
+        return outputList;
+    }
+
+    public GameFieldState getGameFieldState(GameField gameField) {
+        Coordinates<Integer> coordinates = gameField.getCoordinates();
+        GameFieldState gameFieldState = getGameFieldState(coordinates);
+
+        if (gameFieldState.getGameField() != gameField) { //checks if gameField is a part of current GameBoard
+            throw new NoGameFieldStateFoundException();
+        }
+
+        return gameFieldState;
+    }
+
+    public GameFieldState getGameFieldState(Coordinates<Integer> coordinates) {
+        GameFieldState gameFieldState = gameFieldStateMap.get(coordinates);
+
+        if (gameFieldState == null) {
+            throw new NoGameFieldStateFoundException();
+        }
+
+        return gameFieldState;
     }
 
     @Override
@@ -76,6 +149,10 @@ public class GameBoardState implements Entity<GameBoardState>, Observable {
                     .forEach(observer -> observer.onNotification(eventName))
             ;
         }
+    }
+
+    public Map<Coordinates<Integer>, GameFieldState> getGameFieldStateMap() {
+        return gameFieldStateMap;
     }
 
     @Override

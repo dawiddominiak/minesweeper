@@ -4,6 +4,8 @@ import bundle.game.controller.MainMenuController;
 import com.google.inject.Inject;
 
 import javax.swing.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class UserNavigationMenu extends JPanel {
     private MainMenuController controller;
@@ -23,8 +25,33 @@ public class UserNavigationMenu extends JPanel {
 
         JButton exitButton = new MainMenuButton();
         exitButton.setText("Exit");
-        exitButton.addActionListener(e -> {
-            controller.exit();
+        exitButton.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
+                    controller.exit();
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
         });
         add(exitButton);
     }

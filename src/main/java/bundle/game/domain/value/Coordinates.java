@@ -36,4 +36,10 @@ public class Coordinates <TType> implements ValueObject<Coordinates<TType>> {
 
         return sameValueAs((Coordinates<TType>) other);
     }
+
+    public int hashCode() {
+        String hashCodeString = x.toString() + ", " + y.toString();
+
+        return hashCodeString.hashCode();
+    }
 }

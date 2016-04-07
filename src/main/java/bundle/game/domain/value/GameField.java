@@ -7,6 +7,7 @@ public class GameField implements ValueObject<GameField> {
     private GameFieldType gameFieldType;
 
     public GameField(Coordinates<Integer> coordinates, GameFieldType gameFieldType) {
+        this.coordinates = coordinates;
         this.gameFieldType = gameFieldType;
     }
 

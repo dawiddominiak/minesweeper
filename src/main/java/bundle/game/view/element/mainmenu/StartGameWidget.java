@@ -6,6 +6,8 @@ import com.google.inject.Inject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class StartGameWidget extends JPanel {
 
@@ -40,15 +42,40 @@ public class StartGameWidget extends JPanel {
 
         MainMenuButton startButton = new MainMenuButton();
         startButton.setText("Start game");
-        startButton.addActionListener(e -> {
-            controller.createNewGame(
-                //TODO: validation int, and business
-                new BoardSize(
-                    Integer.parseInt(boardWidthTextField.getText()),
-                    Integer.parseInt(boardHeightTextField.getText())
-                ),
-                Integer.parseInt(minesCountTextField.getText())
-            );
+        startButton.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
+                    controller.createNewGame(
+                        //TODO: validation int, and business
+                        new BoardSize(
+                                Integer.parseInt(boardWidthTextField.getText()),
+                                Integer.parseInt(boardHeightTextField.getText())
+                        ),
+                        Integer.parseInt(minesCountTextField.getText())
+                    );
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
         });
         add(startButton);
     }

@@ -9,7 +9,7 @@ public class Randomness {
         int[] result = new int[count];
         int cur = 0;
         int remaining = end - start;
-        for (int i = start; i < end && count > 0; i++) {
+        for (int i = start; i <= end && count > 0; i++) {
             double probability = rng.nextDouble();
             if (probability < ((double) count) / (double) remaining) {
                 count--;
