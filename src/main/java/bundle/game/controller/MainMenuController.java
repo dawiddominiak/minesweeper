@@ -1,6 +1,6 @@
 package bundle.game.controller;
 
-import bundle.game.domain.value.PlainSize;
+import bundle.game.domain.value.BoardSize;
 import bundle.game.view.MainMenuView;
 import com.google.inject.Inject;
 
@@ -22,9 +22,9 @@ public class MainMenuController {
         view.draw();
     }
 
-    public void createNewGame(PlainSize plainSize, int minesCount) {
+    public void createNewGame(BoardSize boardSize, int minesCount) {
         view.setVisible(false);
-        gameController.showGamePlain(plainSize, minesCount);
+        gameController.showGameBoard(boardSize, minesCount);
     }
 
     public void exit() {

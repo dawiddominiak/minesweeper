@@ -1,6 +1,6 @@
 package bundle.game.view;
 
-import bundle.game.domain.entity.GamePlainState;
+import bundle.game.domain.entity.GameBoardState;
 import bundle.game.view.element.game.GameElementsContainer;
 import com.google.inject.Inject;
 
@@ -14,9 +14,9 @@ public class GameView extends JFrame {
         this.gameElementsContainer = gameElementsContainer;
     }
 
-    public void handleGamePlainState(GamePlainState gamePlainState) {
+    public void handleGameBoardState(GameBoardState gameBoardState) {
         setTitle("Minesweeper");
-        gameElementsContainer.draw(gamePlainState);
+        gameElementsContainer.draw(gameBoardState);
         setContentPane(gameElementsContainer);
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

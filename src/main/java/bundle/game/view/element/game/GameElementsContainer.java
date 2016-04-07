@@ -1,6 +1,6 @@
 package bundle.game.view.element.game;
 
-import bundle.game.domain.entity.GamePlainState;
+import bundle.game.domain.entity.GameBoardState;
 import com.google.inject.Inject;
 
 import javax.swing.*;
@@ -14,10 +14,10 @@ public class GameElementsContainer extends JPanel {
         this.scoreBoard = scoreBoard;
     }
 
-    public void draw(GamePlainState gamePlainState) {
+    public void draw(GameBoardState gameBoardState) {
         setLayout(new FlowLayout());
 
-        scoreBoard.draw(gamePlainState);
+        scoreBoard.draw(gameBoardState);
         add(scoreBoard);
     }
 }

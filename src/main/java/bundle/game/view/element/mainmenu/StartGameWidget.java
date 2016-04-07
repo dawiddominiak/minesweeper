@@ -1,7 +1,7 @@
 package bundle.game.view.element.mainmenu;
 
 import bundle.game.controller.MainMenuController;
-import bundle.game.domain.value.PlainSize;
+import bundle.game.domain.value.BoardSize;
 import com.google.inject.Inject;
 
 import javax.swing.*;
@@ -29,12 +29,12 @@ public class StartGameWidget extends JPanel {
         formPane.add(minesCountTextField);
 
         formPane.add(new JLabel("Width", JLabel.RIGHT));
-        JTextField plainWidthTextField = new JTextField(2);
-        formPane.add(plainWidthTextField);
+        JTextField boardWidthTextField = new JTextField(2);
+        formPane.add(boardWidthTextField);
 
         formPane.add(new JLabel("Height", JLabel.RIGHT));
-        JTextField plainHeightTextField = new JTextField(2);
-        formPane.add(plainHeightTextField);
+        JTextField boardHeightTextField = new JTextField(2);
+        formPane.add(boardHeightTextField);
 
         add(formPane);
 
@@ -43,9 +43,9 @@ public class StartGameWidget extends JPanel {
         startButton.addActionListener(e -> {
             controller.createNewGame(
                 //TODO: validation int, and business
-                new PlainSize(
-                    Integer.parseInt(plainWidthTextField.getText()),
-                    Integer.parseInt(plainHeightTextField.getText())
+                new BoardSize(
+                    Integer.parseInt(boardWidthTextField.getText()),
+                    Integer.parseInt(boardHeightTextField.getText())
                 ),
                 Integer.parseInt(minesCountTextField.getText())
             );

@@ -1,10 +1,10 @@
 package bundle.game.controller;
 
 
-import bundle.game.domain.entity.GamePlainState;
+import bundle.game.domain.entity.GameBoardState;
 import bundle.game.domain.service.GameService;
-import bundle.game.domain.value.GamePlain;
-import bundle.game.domain.value.PlainSize;
+import bundle.game.domain.value.GameBoard;
+import bundle.game.domain.value.BoardSize;
 import bundle.game.view.GameView;
 import com.google.inject.Inject;
 
@@ -24,11 +24,11 @@ public class GameController {
         this.gameService = gameService;
     }
 
-    public void showGamePlain(PlainSize plainSize, int minesCount) {
-        GamePlain plain = GamePlain.generateFromScratch(plainSize, minesCount);
-        UUID stateId = gameService.getNewGamePlainId();
-        GamePlainState state = GamePlainState.createFromGamePlain(stateId, plain);
+    public void showGameBoard(BoardSize boardSize, int minesCount) {
+        GameBoard board = GameBoard.generateFromScratch(boardSize, minesCount);
+        UUID stateId = gameService.getNewGameBoardId();
+        GameBoardState state = GameBoardState.createFromGameBoard(stateId, board);
 
-        view.handleGamePlainState(state);
+        view.handleGameBoardState(state);
     }
 }

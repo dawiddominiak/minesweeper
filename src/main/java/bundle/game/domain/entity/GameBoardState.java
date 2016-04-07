@@ -8,22 +8,22 @@ import bundle.game.domain.value.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class GamePlainState implements Entity<GamePlainState>, Observable {
-    private UUID gamePlainStateId;
-    private GamePlain gamePlain;
+public class GameBoardState implements Entity<GameBoardState>, Observable {
+    private UUID gameBoardStateId;
+    private GameBoard gameBoard;
     private Map<Coordinates<Integer>, GameFieldState> gameFieldStateSet;
     private Map<InGameEventNames, List<Observer>> observers;
 
-    private GamePlainState(UUID gamePlainStateId) {
-        this.gamePlainStateId = gamePlainStateId;
+    private GameBoardState(UUID gameBoardStateId) {
+        this.gameBoardStateId = gameBoardStateId;
         this.observers = new HashMap<>();
     }
 
-    public static GamePlainState createFromGamePlain(UUID gamePlainStateId, GamePlain plain) {
-        GamePlainState state = new GamePlainState(gamePlainStateId);
-        state.gamePlain = plain;
+    public static GameBoardState createFromGameBoard(UUID gameBoardStateId, GameBoard board) {
+        GameBoardState state = new GameBoardState(gameBoardStateId);
+        state.gameBoard = board;
 
-        state.gameFieldStateSet = plain
+        state.gameFieldStateSet = board
                 .getFieldSet()
                 .entrySet()
                 .stream()
@@ -32,7 +32,7 @@ public class GamePlainState implements Entity<GamePlainState>, Observable {
                         Map.Entry<Coordinates<Integer>, GameField> entry = (Map.Entry) e;
 
                         return GameFieldState.createFromGameField(
-                            new GameFieldStateId(gamePlainStateId, entry.getKey()),
+                            new GameFieldStateId(gameBoardStateId, entry.getKey()),
                             entry.getValue()
                         );
                     })
@@ -79,7 +79,7 @@ public class GamePlainState implements Entity<GamePlainState>, Observable {
     }
 
     @Override
-    public boolean sameIdentityAs(GamePlainState other) {
-        return other.gamePlainStateId == this.gamePlainStateId;
+    public boolean sameIdentityAs(GameBoardState other) {
+        return other.gameBoardStateId == this.gameBoardStateId;
     }
 }
