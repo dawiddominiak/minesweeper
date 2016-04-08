@@ -91,6 +91,17 @@ public class GameFieldButton extends JButton implements Observer {
         }
     }
 
+    /**
+     * Shows the value in case of defeat
+     */
+    public void showOnDefeat() {
+        if (connectedGameFieldState.getGameField().getGameFieldType() == GameFieldType.MINED) {
+            showMine();
+        } else {
+            makeVisible();
+        }
+    }
+
     private void changeFlagState() {
         if (connectedGameFieldState.isFlagSet()) {
             setText("F");

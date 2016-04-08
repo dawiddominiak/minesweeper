@@ -5,6 +5,7 @@ import bundle.core.value.Observable;
 import bundle.core.value.Observer;
 import bundle.game.domain.value.*;
 import bundle.game.exception.NoGameFieldStateFoundException;
+import bundle.game.exception.TooManyFlagsSetException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,11 +18,14 @@ public class GameBoardState implements Entity<GameBoardState>, Observable {
     private GameBoard gameBoard;
     private Map<Coordinates<Integer>, GameFieldState> gameFieldStateMap;
     private Map<InGameEventNames, List<Observer>> observers;
+    private int unmarkedMinesLeft;
+    private int numberOfVisitedFields;
 
     private GameBoardState(UUID gameBoardStateId) {
         this.gameBoardStateId = gameBoardStateId;
         this.observers = new HashMap<>();
         gameFieldStateMap = new HashMap<>();
+        numberOfVisitedFields = 0;
     }
 
     /**
@@ -53,6 +57,8 @@ public class GameBoardState implements Entity<GameBoardState>, Observable {
                 )
         ;
 
+        state.unmarkedMinesLeft = board.getMinesCount();
+
         return state;
     }
 
@@ -64,11 +70,39 @@ public class GameBoardState implements Entity<GameBoardState>, Observable {
     }
 
     /**
+     * @return number of mines that left unmarked by flag
+     */
+    public int getLeftMinesCounter() {
+        return unmarkedMinesLeft;
+    }
+
+    /**
+     * @return Number of already visited fields
+     */
+    public int getNumberOfVisitedFields() {
+        return numberOfVisitedFields;
+    }
+
+    /**
      * Calls the game field state associated with gameField to toggle flag.
      * @param gameField gameField associated with game field state.
+     * @throws TooManyFlagsSetException
      */
-    public void toggleFlag(GameField gameField) {
-        getGameFieldState(gameField).toggleFlag();
+    public void toggleFlag(GameField gameField) throws TooManyFlagsSetException {
+        GameFieldState gameFieldState = getGameFieldState(gameField);
+
+        if (gameFieldState.isFlagSet()) {
+            ++unmarkedMinesLeft;
+        } else {
+            --unmarkedMinesLeft;
+        }
+
+        if (unmarkedMinesLeft < 0) {
+            unmarkedMinesLeft = 0;
+            throw new TooManyFlagsSetException();
+        }
+
+        gameFieldState.toggleFlag();
         dispatch(InGameEventNames.FLAG_TOGGLED);
     }
 
@@ -80,7 +114,7 @@ public class GameBoardState implements Entity<GameBoardState>, Observable {
      */
     public void digOn(GameField gameField) {
         GameFieldState gameFieldState = getGameFieldState(gameField);
-        DiggingResult diggingResult = gameFieldState.dig();
+        DiggingResult diggingResult = digBase(gameFieldState);
 
         if (diggingResult == DiggingResult.DUG_MINE) {
             dispatch(InGameEventNames.MINE_EXPLODED);
@@ -125,7 +159,7 @@ public class GameBoardState implements Entity<GameBoardState>, Observable {
             neighbors
                     .stream()
                     .forEach(
-                            neighbor -> getGameFieldState(neighbor).dig()
+                            neighbor -> digBase(getGameFieldState(neighbor))
                     );
 
             outputList.addAll(
@@ -137,6 +171,36 @@ public class GameBoardState implements Entity<GameBoardState>, Observable {
         });
 
         return outputList;
+    }
+
+    private DiggingResult digBase(GameFieldState gameFieldState) {
+        DiggingResult result = gameFieldState.dig();
+
+        if (result == DiggingResult.DUG_SAFELY) {
+            ++numberOfVisitedFields;
+            dispatch(InGameEventNames.DUG_SAFELY);
+
+            if (isGameWon()) {
+                dispatch(InGameEventNames.GAME_WON);
+            }
+        }
+
+        return result;
+    }
+
+    private boolean isGameWon() {
+        GameBoard board = getGameBoard();
+
+        int area = board.getBoardSize().getArea();
+        int minesCount = board.getMinesCount();
+
+        int fieldsToDug = area - minesCount;
+
+        if (fieldsToDug == numberOfVisitedFields) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

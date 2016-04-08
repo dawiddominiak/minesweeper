@@ -1,6 +1,7 @@
 package bundle.game.controller;
 
 import bundle.game.domain.value.BoardSize;
+import bundle.game.view.CredentialsView;
 import bundle.game.view.MainMenuView;
 import com.google.inject.Inject;
 
@@ -37,6 +38,13 @@ public class MainMenuController {
     }
 
     /**
+     * Calls view to be visible.
+     */
+    public void makeVisible() {
+        view.setVisible(true);
+    }
+
+    /**
      * Hides current menu and calls game controller to show new game board.
      *
      * @param boardSize size of game board.
@@ -45,6 +53,13 @@ public class MainMenuController {
     public void createNewGame(BoardSize boardSize, int minesCount) {
         view.setVisible(false);
         gameController.showGameBoard(boardSize, minesCount);
+    }
+
+    /**
+     * Shows credentials
+     */
+    public void showCredentials() {
+        new CredentialsView();
     }
 
     /**

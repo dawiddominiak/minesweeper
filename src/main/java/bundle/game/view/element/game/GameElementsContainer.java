@@ -1,5 +1,6 @@
 package bundle.game.view.element.game;
 
+import bundle.game.controller.GameController;
 import bundle.game.domain.entity.GameBoardState;
 import com.google.inject.Inject;
 
@@ -10,25 +11,10 @@ import java.awt.*;
  * Container to keep game widgets
  */
 public class GameElementsContainer extends JPanel{
-    private ScoreBoardWidget scoreBoardWidget;
-    private GameBoardWidget gameBoardWidget;
+    private GameController controller;
 
-    /**
-     * Injects score board widget
-     * @param scoreBoardWidget score board widget to be injected.
-     */
-    @Inject
-    public void setScoreBoardWidget(ScoreBoardWidget scoreBoardWidget) {
-        this.scoreBoardWidget = scoreBoardWidget;
-    }
-
-    /**
-     * Injects game board widget
-     * @param gameBoardWidget game board widget to be injected.
-     */
-    @Inject
-    public void setGameBoardWidget(GameBoardWidget gameBoardWidget) {
-        this.gameBoardWidget = gameBoardWidget;
+    public GameElementsContainer(GameController controller) {
+        this.controller = controller;
     }
 
     /**
@@ -38,9 +24,11 @@ public class GameElementsContainer extends JPanel{
     public void draw(GameBoardState gameBoardState) {
         setLayout(new FlowLayout());
 
+        ScoreBoardWidget scoreBoardWidget = new ScoreBoardWidget(controller);
         scoreBoardWidget.draw(gameBoardState);
         add(scoreBoardWidget);
 
+        GameBoardWidget gameBoardWidget = new GameBoardWidget(controller);
         gameBoardWidget.draw(gameBoardState);
         add(gameBoardWidget);
     }

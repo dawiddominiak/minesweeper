@@ -6,9 +6,12 @@ import bundle.game.domain.service.GameService;
 import bundle.game.domain.value.GameBoard;
 import bundle.game.domain.value.BoardSize;
 import bundle.game.domain.value.GameField;
+import bundle.game.exception.TooManyFlagsSetException;
 import bundle.game.view.GameView;
 import com.google.inject.Inject;
 
+import javax.swing.*;
+import java.awt.event.WindowEvent;
 import java.util.UUID;
 
 /**
@@ -17,16 +20,8 @@ import java.util.UUID;
  */
 public class GameController {
     private GameService gameService;
+    private MainMenuController mainMenuController;
     private GameView view;
-
-    /**
-     * Injects view into current controller.
-     * @param view game view to be injected.
-     */
-    @Inject
-    public void setView(GameView view) {
-        this.view = view;
-    }
 
     /**
      * Injects gameService into current controller.
@@ -35,6 +30,15 @@ public class GameController {
     @Inject
     public void setGameService(GameService gameService) {
         this.gameService = gameService;
+    }
+
+    /**
+     * Injects mainMenuController into current controller.
+     * @param mainMenuController main menu controller to be injected.
+     */
+    @Inject
+    public void setMainMenuController(MainMenuController mainMenuController) {
+        this.mainMenuController = mainMenuController;
     }
 
     /**
@@ -49,7 +53,29 @@ public class GameController {
         UUID stateId = gameService.getNewGameBoardId();
         GameBoardState state = GameBoardState.createFromGameBoard(stateId, board);
 
+        GameView view = new GameView(this);
+
+        if (this.view != null) {
+            closeWindow();
+        }
+
+        this.view = view;
+
         view.handleGameBoardState(state);
+    }
+
+    /**
+     * Runs show action from main menu controller.
+     * Makes current frame invisible.
+     */
+    public void moveToMainMenu() {
+        mainMenuController.makeVisible();
+        closeWindow();
+    }
+
+    private void closeWindow() {
+        view.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        view.dispatchEvent(new WindowEvent(view, WindowEvent.WINDOW_CLOSING));
     }
 
     /**
@@ -71,6 +97,9 @@ public class GameController {
      */
     public void dispatchToggleFlagAction(GameFieldState gameFieldState, GameBoardState gameBoardState) {
         GameField gameField = gameFieldState.getGameField();
-        gameBoardState.toggleFlag(gameField);
+
+        try {
+            gameBoardState.toggleFlag(gameField);
+        } catch (TooManyFlagsSetException e) { }
     }
 }

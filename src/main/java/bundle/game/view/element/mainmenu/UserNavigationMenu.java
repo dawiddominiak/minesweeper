@@ -31,6 +31,34 @@ public class UserNavigationMenu extends JPanel {
 
         JButton credentialsButton = new MainMenuButton();
         credentialsButton.setText("Credentials");
+        credentialsButton.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
+                    controller.showCredentials();
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
         add(credentialsButton);
 
         JButton exitButton = new MainMenuButton();

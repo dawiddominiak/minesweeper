@@ -1,5 +1,6 @@
 package bundle.game.view;
 
+import bundle.game.controller.GameController;
 import bundle.game.domain.entity.GameBoardState;
 import bundle.game.view.element.game.GameElementsContainer;
 import com.google.inject.Inject;
@@ -10,23 +11,23 @@ import javax.swing.*;
  * View of game
  */
 public class GameView extends JFrame {
-    private GameElementsContainer gameElementsContainer;
+    private GameController controller;
 
     /**
-     * Injects game elements container
-     * @param gameElementsContainer game elements container to be injected.
+     * Creates new GameView
+     * @param controller injects controller
      */
-    @Inject
-    public void setGameElementsContainer(GameElementsContainer gameElementsContainer) {
-        this.gameElementsContainer = gameElementsContainer;
+    public GameView(GameController controller) {
+        this.controller = controller;
     }
 
     /**
      * Draws current window based on game board state.
-     * @param gameBoardState
+     * @param gameBoardState state of game board
      */
     public void handleGameBoardState(GameBoardState gameBoardState) {
         setTitle("Minesweeper");
+        GameElementsContainer gameElementsContainer = new GameElementsContainer(controller);
         gameElementsContainer.draw(gameBoardState);
         setContentPane(gameElementsContainer);
 
@@ -35,4 +36,5 @@ public class GameView extends JFrame {
         setVisible(true);
         setSize(getPreferredSize());
     }
+
 }

@@ -24,16 +24,8 @@ public class GameBoardWidget extends JPanel implements Observer {
     /**
      * Constructs GameBoardWidget
      */
-    public GameBoardWidget() {
+    public GameBoardWidget(GameController controller) {
         buttonList = new ArrayList<>();
-    }
-
-    /**
-     * Injects game controller
-     * @param controller game controller to be injected.
-     */
-    @Inject
-    public void setGameController(GameController controller) {
         this.controller = controller;
     }
 
@@ -55,7 +47,6 @@ public class GameBoardWidget extends JPanel implements Observer {
             verticalGap
         );
         setLayout(gridLayout);
-        setForeground(new Color(0, 0, 0, 50));
         setBackground(new Color(0, 0, 0));
 
         for (int y = gameBoardSize.getHeight(); y >= 1; --y) {
@@ -68,6 +59,7 @@ public class GameBoardWidget extends JPanel implements Observer {
         }
 
         gameBoardState.registerObserver(InGameEventNames.MINE_EXPLODED, this);
+        gameBoardState.registerObserver(InGameEventNames.GAME_WON, this);
     }
 
     /**
@@ -77,8 +69,15 @@ public class GameBoardWidget extends JPanel implements Observer {
     public void onNotification(InGameEventNames eventName) {
         if (eventName == InGameEventNames.MINE_EXPLODED) {
             buttonList.stream().forEach(gameFieldButton -> {
+                gameFieldButton.showOnDefeat();
+                gameFieldButton.setBackground(new Color(0, 0, 0, 10));
+            });
+        }
+
+        if (eventName == InGameEventNames.GAME_WON) {
+            buttonList.stream().forEach(gameFieldButton -> {
                 gameFieldButton.setEnabled(false);
-                gameFieldButton.setBackground(new Color(0, 0, 0, 50));
+                gameFieldButton.setBackground(new Color(0, 255, 0, 60));
             });
         }
     }
