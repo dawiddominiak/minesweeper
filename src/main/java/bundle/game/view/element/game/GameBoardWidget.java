@@ -14,19 +14,34 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+/**
+ * Game board view.
+ */
 public class GameBoardWidget extends JPanel implements Observer {
     private GameController controller;
     private java.util.List<GameFieldButton> buttonList;
 
+    /**
+     * Constructs GameBoardWidget
+     */
     public GameBoardWidget() {
         buttonList = new ArrayList<>();
     }
 
+    /**
+     * Injects game controller
+     * @param controller game controller to be injected.
+     */
     @Inject
     public void setGameController(GameController controller) {
         this.controller = controller;
     }
 
+    /**
+     * Renders game board based on game board state.
+     * Registers this as game board state observer.
+     * @param gameBoardState game board state to be rendered.
+     */
     public void draw(GameBoardState gameBoardState) {
         GameBoard gameBoard = gameBoardState.getGameBoard();
         BoardSize gameBoardSize = gameBoard.getBoardSize();
@@ -55,6 +70,9 @@ public class GameBoardWidget extends JPanel implements Observer {
         gameBoardState.registerObserver(InGameEventNames.MINE_EXPLODED, this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onNotification(InGameEventNames eventName) {
         if (eventName == InGameEventNames.MINE_EXPLODED) {

@@ -9,15 +9,25 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+/**
+ * View of start game form
+ */
 public class StartGameWidget extends JPanel {
-
     private MainMenuController controller;
 
+    /**
+     * Injects main menu controller.
+     * @param controller controller to be injected.
+     */
     @Inject
     public void setMainMenuController(MainMenuController controller) {
         this.controller = controller;
     }
 
+    /**
+     * Renders start game widget.
+     * Handles mouse events and calls connected controller actions.
+     */
     public void draw() {
         BoxLayout currentLayout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
         setLayout(currentLayout);

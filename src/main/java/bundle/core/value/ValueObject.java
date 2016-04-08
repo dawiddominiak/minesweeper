@@ -2,7 +2,7 @@ package bundle.core.value;
 
 /**
  * Interface to determine that current class will produce ValueObject's.
- * @see <a href="http://martinfowler.com/bliki/ValueObject.html">Martin Fowler definition of value object</a>.
+ * See <a href="http://martinfowler.com/bliki/ValueObject.html">Martin Fowler definition of value object</a>.
  * @param <TType> final class.
  */
 public interface ValueObject<TType> {

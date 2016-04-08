@@ -6,14 +6,25 @@ import bundle.game.domain.value.InGameEventNames;
 
 import javax.swing.*;
 
+/**
+ * View of score board
+ */
 public class ScoreBoardWidget extends JPanel implements Observer{
-    //TODO: time
+    /**
+     * Renders score board.
+     * @TODO time, score, mines counter
+     * @param gameBoardState
+     */
     public void draw(GameBoardState gameBoardState) {
         gameBoardState.registerObserver(InGameEventNames.FLAG_TOGGLED, this);
     }
 
+    /**
+     * @TODO
+     * {@inheritDoc}
+     * @param eventName
+     */
     @Override
     public void onNotification(InGameEventNames eventName) {
-        //TODO:
     }
 }

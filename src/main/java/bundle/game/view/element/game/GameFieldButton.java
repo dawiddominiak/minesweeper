@@ -13,10 +13,21 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+/**
+ * Button that is a view for single game field.
+ */
 public class GameFieldButton extends JButton implements Observer {
     private GameFieldState connectedGameFieldState;
     private GameBoardState connectedGameBoardState;
 
+    /**
+     * Constructs game field button based on field state, board state.
+     * Additionally we're injecting controller here.
+     *
+     * @param gameFieldState state of game field
+     * @param gameBoardState state of game board
+     * @param controller game controller to be injected.
+     */
     public GameFieldButton(GameFieldState gameFieldState, GameBoardState gameBoardState, GameController controller) {
         connectedGameFieldState = gameFieldState;
         connectedGameBoardState = gameBoardState;
@@ -62,6 +73,9 @@ public class GameFieldButton extends JButton implements Observer {
         });
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onNotification(InGameEventNames eventName) {
         if (eventName == InGameEventNames.FIELD_BECAME_VISIBLE) {

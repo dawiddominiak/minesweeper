@@ -7,14 +7,24 @@ import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+/**
+ * View of navigation menu part of main menu.
+ */
 public class UserNavigationMenu extends JPanel {
     private MainMenuController controller;
 
+    /**
+     * Creates user navigation menu widget.
+     * @param controller controller to be injected.
+     */
     @Inject
     public UserNavigationMenu(MainMenuController controller) {
         this.controller = controller;
     }
 
+    /**
+     * Renders user navigation menu widget.
+     */
     public void draw() {
         BoxLayout currentLayout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
         setLayout(currentLayout);

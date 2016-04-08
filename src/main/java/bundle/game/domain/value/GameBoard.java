@@ -8,16 +8,26 @@ import com.google.common.primitives.Ints;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Immutable object to represent game board.
+ */
 public class GameBoard implements ValueObject<GameBoard> {
 
-    private Map<Coordinates<Integer>, GameField> fieldSet;
+    private Map<Coordinates<Integer>, GameField> fieldMap;
     private BoardSize boardSize;
     private int minesCount;
 
     private GameBoard() {
-        fieldSet = new HashMap<>();
+        fieldMap = new HashMap<>();
     }
 
+    /**
+     * Named constructor to generate random game board based on board size and mines count.
+     * @param boardSize board size
+     * @param minesCount number of mines
+     *
+     * @return new GameBoard value object.
+     */
     public static GameBoard generateFromScratch(BoardSize boardSize, int minesCount) {
         GameBoard board = new GameBoard();
         board.boardSize = boardSize;
@@ -45,35 +55,54 @@ public class GameBoard implements ValueObject<GameBoard> {
                 }
 
                 GameField field = new GameField(fieldCoordinates, fieldType);
-                board.fieldSet.put(fieldCoordinates, field);
+                board.fieldMap.put(fieldCoordinates, field);
             }
         }
 
         return board;
     }
 
-    public Map<Coordinates<Integer>, GameField> getFieldSet() {
-        return fieldSet;
+    /**
+     * @return map of fields contained by GameBoard.
+     */
+    public Map<Coordinates<Integer>, GameField> getFieldMap() {
+        return fieldMap;
     }
 
+    /**
+     * @return current BoardSize
+     */
     public BoardSize getBoardSize() {
         return boardSize;
     }
 
+    /**
+     * @return number of mines
+     */
     public int getMinesCount() {
         return minesCount;
     }
 
+    /**
+     * @param coordinates coordinates of field.
+     *
+     * @return field located under indicated coordinates.
+     */
     public GameField getField(Coordinates<Integer> coordinates) {
-        GameField field = fieldSet.get(coordinates);
+        GameField field = fieldMap.get(coordinates);
 
         if (field == null) {
             throw new NoGameFieldFoundException();
         }
 
-        return fieldSet.get(coordinates);
+        return fieldMap.get(coordinates);
     }
 
+    /**
+     * Counts number of mines in fields connected with indicated field.
+     * @param gameField field to count neighboring mines.
+     * @return number of mines.
+     */
     public int countNumberOfMinesInNeighborhood(GameField gameField) {
         List<GameField> neighboringFields = getListOfAllNeighbors(gameField);
 
@@ -86,64 +115,28 @@ public class GameBoard implements ValueObject<GameBoard> {
         return Ints.saturatedCast(numberOfMines);
     }
 
-    public List<GameField> getListOfAllNeighbors(GameField gameField) {
-        List<GameField> neighbors = getListOfTroubleNeighbors(gameField);
-        Coordinates<Integer> coordinates = gameField.getCoordinates();
-        int currentX = coordinates.getX();
-        int currentY = coordinates.getY();
-
-        try {
-            GameField northeasternNeighbor = getField(new Coordinates<>(currentX + 1, currentY + 1));
-            neighbors.add(northeasternNeighbor);
-        } catch (NoGameFieldFoundException e) {}
-
-        try {
-            GameField southeasternNeighbor = getField(new Coordinates<>(currentX + 1, currentY - 1));
-            neighbors.add(southeasternNeighbor);
-        } catch (NoGameFieldFoundException e) {}
-
-        try {
-            GameField southwesternNeighbor = getField(new Coordinates<>(currentX - 1, currentY - 1));
-            neighbors.add(southwesternNeighbor);
-        } catch (NoGameFieldFoundException e) {}
-
-        try {
-            GameField northwesternNeighbor = getField(new Coordinates<>(currentX - 1, currentY + 1));
-            neighbors.add(northwesternNeighbor);
-        } catch (NoGameFieldFoundException e) {}
-
-        return neighbors;
-    }
-
     /**
-     * @param gameField GameField to find neighbors
-     * @return list of TRouBLe (top right bottom left :)) neighbors of current GameField
+     * Gets list of neighboring fields on board.
+     * @param gameField gameField to find neighbors.
+     * @return list of all neighbors.
      */
-    public List<GameField> getListOfTroubleNeighbors(GameField gameField) {
+    public List<GameField> getListOfAllNeighbors(GameField gameField) {
         List<GameField> neighbors = new ArrayList<>();
         Coordinates<Integer> coordinates = gameField.getCoordinates();
         int currentX = coordinates.getX();
         int currentY = coordinates.getY();
+        int x, y;
 
-        try {
-            GameField northernNeighbor = getField(new Coordinates<>(currentX, currentY + 1));
-            neighbors.add(northernNeighbor);
-        } catch (NoGameFieldFoundException e) {}
-
-        try {
-            GameField easternNeighbor = getField(new Coordinates<>(currentX + 1, currentY));
-            neighbors.add(easternNeighbor);
-        } catch (NoGameFieldFoundException e) {}
-
-        try {
-            GameField southernNeighbor = getField(new Coordinates<>(currentX, currentY - 1));
-            neighbors.add(southernNeighbor);
-        } catch (NoGameFieldFoundException e) {}
-
-        try {
-            GameField westernNeighbor = getField(new Coordinates<>(currentX - 1, currentY));
-            neighbors.add(westernNeighbor);
-        } catch (NoGameFieldFoundException e) {}
+        for (x = currentX - 1; x <= currentX + 1; ++x) {
+            for (y = currentY - 1; y <= currentY + 1; ++y) {
+                if (x != 0 || y != 0) {
+                    try {
+                        GameField neighbor = getField(new Coordinates<>(x, y));
+                        neighbors.add(neighbor);
+                    } catch (NoGameFieldFoundException e) {}
+                }
+            }
+        }
 
         return neighbors;
     }
@@ -172,15 +165,23 @@ public class GameBoard implements ValueObject<GameBoard> {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean sameValueAs(GameBoard otherBoard) {
         return this.minesCount == otherBoard.minesCount
             && this.boardSize.sameValueAs(otherBoard.boardSize)
-            && sameFieldSetAs(otherBoard)
+            && sameFieldMapAs(otherBoard.getFieldMap())
         ;
     }
 
-    public boolean sameFieldSetAs(GameBoard otherBoard) {
-        //TODO: logic here
-        return false;
+    /**
+     * Checks if indicated field map contains exactly the same elements.
+     * @param otherFieldMap field map to compare.
+     * @return true if field maps are same, false in other case.
+     */
+    public boolean sameFieldMapAs(Map<Coordinates<Integer>, GameField> otherFieldMap) {
+        return fieldMap.entrySet().size() == otherFieldMap.entrySet().size()
+        && fieldMap.entrySet().stream().allMatch(entry -> otherFieldMap.get(entry.getKey()) == entry.getValue());
     }
 }

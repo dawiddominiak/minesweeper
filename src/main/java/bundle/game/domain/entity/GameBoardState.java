@@ -9,6 +9,9 @@ import bundle.game.exception.NoGameFieldStateFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Represents state of associated game board value
+ */
 public class GameBoardState implements Entity<GameBoardState>, Observable {
     private UUID gameBoardStateId;
     private GameBoard gameBoard;
@@ -21,12 +24,21 @@ public class GameBoardState implements Entity<GameBoardState>, Observable {
         gameFieldStateMap = new HashMap<>();
     }
 
+    /**
+     * Named constructor to create new GameBoardState entity based on associated GameBoard.
+     * Additionally we need to inject identity of newly created entity.
+     *
+     * @param gameBoardStateId identity of newly created entity.
+     * @param board GameBoard value associated with newly created state.
+     *
+     * @return new GameBoardState entity.
+     */
     public static GameBoardState createFromGameBoard(UUID gameBoardStateId, GameBoard board) {
         GameBoardState state = new GameBoardState(gameBoardStateId);
         state.gameBoard = board;
 
         state.gameFieldStateMap = board
-                .getFieldSet()
+                .getFieldMap()
                 .entrySet()
                 .stream()
                 .collect(
@@ -44,15 +56,28 @@ public class GameBoardState implements Entity<GameBoardState>, Observable {
         return state;
     }
 
+    /**
+     * @return associated GameBoard.
+     */
     public GameBoard getGameBoard() {
         return gameBoard;
     }
 
+    /**
+     * Calls the game field state associated with gameField to toggle flag.
+     * @param gameField gameField associated with game field state.
+     */
     public void toggleFlag(GameField gameField) {
         getGameFieldState(gameField).toggleFlag();
         dispatch(InGameEventNames.FLAG_TOGGLED);
     }
 
+    /**
+     * Calls the game field state associated with gameField to dig.
+     * Digs every safety field in the area outlined by business logic of game.
+     *
+     * @param gameField gameField associated with game field state.
+     */
     public void digOn(GameField gameField) {
         GameFieldState gameFieldState = getGameFieldState(gameField);
         DiggingResult diggingResult = gameFieldState.dig();
@@ -74,6 +99,17 @@ public class GameBoardState implements Entity<GameBoardState>, Observable {
         }
     }
 
+    /**
+     * See <a href="https://en.wikipedia.org/wiki/Breadth-first_search">Breadth-first search algorithm.</a>
+     * One step of BFS algorithm.
+     * Returns the list of neighboring, not visited fields if it's allowed by business rules.
+     * Method automatically does the dig if it's possible,
+     * pointing out that neighbor was visited.
+     *
+     * @param initialList initial list of fields.
+     *
+     * @return list of allowed, not visited neighbors.
+     */
     private List<GameFieldState> nextBreadthFirstStep(List<GameFieldState> initialList) {
         List<GameFieldState> outputList = new ArrayList<>();
 
@@ -103,7 +139,12 @@ public class GameBoardState implements Entity<GameBoardState>, Observable {
         return outputList;
     }
 
-    public GameFieldState getGameFieldState(GameField gameField) {
+    /**
+     * @param gameField game field associated with game field state.
+     * @return game field state associated with gameField.
+     * @throws NoGameFieldStateFoundException
+     */
+    public GameFieldState getGameFieldState(GameField gameField) throws NoGameFieldStateFoundException {
         Coordinates<Integer> coordinates = gameField.getCoordinates();
         GameFieldState gameFieldState = getGameFieldState(coordinates);
 
@@ -114,7 +155,12 @@ public class GameBoardState implements Entity<GameBoardState>, Observable {
         return gameFieldState;
     }
 
-    public GameFieldState getGameFieldState(Coordinates<Integer> coordinates) {
+    /**
+     * @param coordinates coordinates of game field associated with game field state.
+     * @return state of game field located under indicated coordinates.
+     * @throws NoGameFieldStateFoundException
+     */
+    public GameFieldState getGameFieldState(Coordinates<Integer> coordinates) throws NoGameFieldStateFoundException {
         GameFieldState gameFieldState = gameFieldStateMap.get(coordinates);
 
         if (gameFieldState == null) {
@@ -124,6 +170,9 @@ public class GameBoardState implements Entity<GameBoardState>, Observable {
         return gameFieldState;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void registerObserver(InGameEventNames eventName, Observer observer) {
         if (!observers.containsKey(eventName)) {
@@ -137,6 +186,9 @@ public class GameBoardState implements Entity<GameBoardState>, Observable {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void unregisterObserver(InGameEventNames eventName, Observer observer) {
         if (observers.containsKey(eventName)) {
@@ -149,6 +201,9 @@ public class GameBoardState implements Entity<GameBoardState>, Observable {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void dispatch(InGameEventNames eventName) {
         if (observers.containsKey(eventName)) {
@@ -160,10 +215,9 @@ public class GameBoardState implements Entity<GameBoardState>, Observable {
         }
     }
 
-    public Map<Coordinates<Integer>, GameFieldState> getGameFieldStateMap() {
-        return gameFieldStateMap;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean sameIdentityAs(GameBoardState other) {
         return other.gameBoardStateId == this.gameBoardStateId;

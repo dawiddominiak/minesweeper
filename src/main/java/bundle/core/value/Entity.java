@@ -2,7 +2,7 @@ package bundle.core.value;
 
 /**
  * Interface to determine that current class will produce Entities.
- * @see <a href="http://martinfowler.com/bliki/EvansClassification.html">Classification of domain objects</a>.
+ * @see <a href="http://martinfowler.com/bliki/EvansClassification.html">Classification of domain objects</a>
  * @param <TType> final class.
  */
 public interface Entity<TType> {
