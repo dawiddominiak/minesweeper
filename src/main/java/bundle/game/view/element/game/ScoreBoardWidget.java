@@ -5,7 +5,6 @@ import bundle.game.controller.GameController;
 import bundle.game.domain.entity.GameBoardState;
 import bundle.game.domain.value.InGameEventNames;
 import bundle.game.view.element.mainmenu.MainMenuButton;
-import com.google.inject.Inject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,7 +26,7 @@ public class ScoreBoardWidget extends JPanel implements Observer{
 
     /**
      * Renders score board.
-     * @TODO time, score
+     * TODO time, score
      * @param gameBoardState connected state of game board
      */
     public void draw(GameBoardState gameBoardState) {

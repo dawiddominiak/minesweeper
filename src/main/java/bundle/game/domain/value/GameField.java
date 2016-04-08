@@ -13,8 +13,6 @@ public class GameField implements ValueObject<GameField> {
      * Named constructor to generate game field based on coordinates and game field type.
      * @param coordinates coordinates
      * @param gameFieldType type of field
-     *
-     * @return new GameField value object.
      */
     public GameField(Coordinates<Integer> coordinates, GameFieldType gameFieldType) {
         this.coordinates = coordinates;
