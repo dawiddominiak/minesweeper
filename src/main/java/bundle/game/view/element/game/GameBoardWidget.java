@@ -1,18 +1,26 @@
 package bundle.game.view.element.game;
 
+import bundle.core.value.Observer;
 import bundle.game.controller.GameController;
 import bundle.game.domain.entity.GameBoardState;
 import bundle.game.domain.entity.GameFieldState;
 import bundle.game.domain.value.BoardSize;
 import bundle.game.domain.value.Coordinates;
 import bundle.game.domain.value.GameBoard;
+import bundle.game.domain.value.InGameEventNames;
 import com.google.inject.Inject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
-public class GameBoardWidget extends JPanel {
+public class GameBoardWidget extends JPanel implements Observer {
     private GameController controller;
+    private java.util.List<GameFieldButton> buttonList;
+
+    public GameBoardWidget() {
+        buttonList = new ArrayList<>();
+    }
 
     @Inject
     public void setGameController(GameController controller) {
@@ -38,8 +46,22 @@ public class GameBoardWidget extends JPanel {
         for (int y = gameBoardSize.getHeight(); y >= 1; --y) {
             for (int x = 1; x <= gameBoardSize.getWidth(); ++x) {
                 GameFieldState fieldState = gameBoardState.getGameFieldState(new Coordinates<>(x, y));
-                add(new GameFieldButton(fieldState, gameBoardState, controller));
+                GameFieldButton button = new GameFieldButton(fieldState, gameBoardState, controller);
+                buttonList.add(button);
+                add(button);
             }
+        }
+
+        gameBoardState.registerObserver(InGameEventNames.MINE_EXPLODED, this);
+    }
+
+    @Override
+    public void onNotification(InGameEventNames eventName) {
+        if (eventName == InGameEventNames.MINE_EXPLODED) {
+            buttonList.stream().forEach(gameFieldButton -> {
+                gameFieldButton.setEnabled(false);
+                gameFieldButton.setBackground(new Color(0, 0, 0, 50));
+            });
         }
     }
 }

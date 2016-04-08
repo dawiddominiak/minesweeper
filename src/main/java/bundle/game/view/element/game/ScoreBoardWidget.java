@@ -5,13 +5,11 @@ import bundle.game.domain.entity.GameBoardState;
 import bundle.game.domain.value.InGameEventNames;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class ScoreBoardWidget extends JPanel implements Observer{
     //TODO: time
     public void draw(GameBoardState gameBoardState) {
-        gameBoardState.registerObserver(InGameEventNames.FLAG_SET, this);
-        gameBoardState.registerObserver(InGameEventNames.FLAG_TAKEN_AWAY, this);
+        gameBoardState.registerObserver(InGameEventNames.FLAG_TOGGLED, this);
     }
 
     @Override

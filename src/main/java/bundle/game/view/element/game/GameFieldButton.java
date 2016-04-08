@@ -16,23 +16,27 @@ import java.awt.event.MouseListener;
 public class GameFieldButton extends JButton implements Observer {
     private GameFieldState connectedGameFieldState;
     private GameBoardState connectedGameBoardState;
-    private GameController controller;
 
     public GameFieldButton(GameFieldState gameFieldState, GameBoardState gameBoardState, GameController controller) {
         connectedGameFieldState = gameFieldState;
         connectedGameBoardState = gameBoardState;
-        this.controller = controller;
 
         setBackground(Color.WHITE);
         setOpaque(true);
         setPreferredSize(new Dimension(30, 30));
         gameFieldState.registerObserver(InGameEventNames.FIELD_BECAME_VISIBLE, this);
+        gameFieldState.registerObserver(InGameEventNames.FLAG_TOGGLED, this);
+        gameFieldState.registerObserver(InGameEventNames.MINE_EXPLODED, this);
 
         addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
+                if (isEnabled() && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
                     controller.dispatchDigAction(gameFieldState, gameBoardState);
+                }
+
+                if (isEnabled() && SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
+                    controller.dispatchToggleFlagAction(gameFieldState, gameBoardState);
                 }
             }
 
@@ -63,15 +67,34 @@ public class GameFieldButton extends JButton implements Observer {
         if (eventName == InGameEventNames.FIELD_BECAME_VISIBLE) {
             makeVisible();
         }
+
+        if (eventName == InGameEventNames.FLAG_TOGGLED) {
+            changeFlagState();
+        }
+
+        if (eventName == InGameEventNames.MINE_EXPLODED) {
+            showMine();
+        }
+    }
+
+    private void changeFlagState() {
+        if (connectedGameFieldState.isFlagSet()) {
+            setText("F");
+        } else {
+            setText("");
+        }
+    }
+
+    private void showMine() {
+        setText("M");
+        setEnabled(false);
     }
 
     private void makeVisible() {
         //TODO: better UI
         GameField gameField = connectedGameFieldState.getGameField();
 
-        if (gameField.getGameFieldType() == GameFieldType.MINED) {
-            setText("M");
-        } else {
+        if (gameField.getGameFieldType() != GameFieldType.MINED) {
             int numberOfMinesInNeighborhood = connectedGameBoardState
                     .getGameBoard()
                     .countNumberOfMinesInNeighborhood(gameField);
@@ -83,6 +106,8 @@ public class GameFieldButton extends JButton implements Observer {
             if (numberOfMinesInNeighborhood == 0) {
                 setText(".");
             }
+
+            setEnabled(false);
         }
     }
 }

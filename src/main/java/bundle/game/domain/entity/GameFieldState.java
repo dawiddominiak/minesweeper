@@ -33,13 +33,17 @@ public class GameFieldState implements Entity<GameFieldState>, Observable {
         return gameFieldState;
     }
 
+    public boolean isFlagSet() {
+        return isFlagSet;
+    }
+
     public DiggingResult dig() {
-        if (!checkIfCanBeDug()) {
+        if (!checkIfCanChangeState()) {
             return DiggingResult.ALREADY_DUG;
         }
 
         makeVisible();
-        removeFlag();
+        isFlagSet = false;
 
         if (gameField.getGameFieldType() == GameFieldType.MINED) {
             dispatch(InGameEventNames.MINE_EXPLODED);
@@ -54,7 +58,7 @@ public class GameFieldState implements Entity<GameFieldState>, Observable {
         return gameField;
     }
 
-    public boolean checkIfCanBeDug() {
+    public boolean checkIfCanChangeState() {
         return visibility == Visibility.HIDDEN && activationState == ActivationState.ACTIVE;
     }
 
@@ -64,15 +68,10 @@ public class GameFieldState implements Entity<GameFieldState>, Observable {
         dispatch(InGameEventNames.FIELD_BECAME_VISIBLE);
     }
 
-    public void putFlag() {
-        isFlagSet = true;
-        dispatch(InGameEventNames.FLAG_SET);
-    }
-
-    public void removeFlag() {
-        if (isFlagSet) {
-            isFlagSet = false;
-            dispatch(InGameEventNames.FLAG_TAKEN_AWAY);
+    public void toggleFlag() {
+        if (checkIfCanChangeState()) {
+            isFlagSet = !isFlagSet;
+            dispatch(InGameEventNames.FLAG_TOGGLED);
         }
     }
 

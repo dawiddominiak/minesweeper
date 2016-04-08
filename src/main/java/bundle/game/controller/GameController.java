@@ -38,4 +38,9 @@ public class GameController {
         GameField gameField = gameFieldState.getGameField();
         gameBoardState.digOn(gameField);
     }
+
+    public void dispatchToggleFlagAction(GameFieldState gameFieldState, GameBoardState gameBoardState) {
+        GameField gameField = gameFieldState.getGameField();
+        gameBoardState.toggleFlag(gameField);
+    }
 }

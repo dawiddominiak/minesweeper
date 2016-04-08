@@ -48,9 +48,18 @@ public class GameBoardState implements Entity<GameBoardState>, Observable {
         return gameBoard;
     }
 
+    public void toggleFlag(GameField gameField) {
+        getGameFieldState(gameField).toggleFlag();
+        dispatch(InGameEventNames.FLAG_TOGGLED);
+    }
+
     public void digOn(GameField gameField) {
         GameFieldState gameFieldState = getGameFieldState(gameField);
         DiggingResult diggingResult = gameFieldState.dig();
+
+        if (diggingResult == DiggingResult.DUG_MINE) {
+            dispatch(InGameEventNames.MINE_EXPLODED);
+        }
 
         if (
             diggingResult == DiggingResult.DUG_SAFELY
@@ -69,11 +78,11 @@ public class GameBoardState implements Entity<GameBoardState>, Observable {
         List<GameFieldState> outputList = new ArrayList<>();
 
         initialList.stream().forEach(gameFieldState -> {
-            List<GameField> neighbors = gameBoard.getListOfTroubleNeighbors(gameFieldState.getGameField());
+            List<GameField> neighbors = gameBoard.getListOfAllNeighbors(gameFieldState.getGameField());
             List<GameFieldState> notVisitedNeighbors = neighbors
                     .stream()
                     .map(this::getGameFieldState)
-                    .filter(GameFieldState::checkIfCanBeDug)
+                    .filter(GameFieldState::checkIfCanChangeState)
                     .collect(Collectors.toList())
             ;
 
